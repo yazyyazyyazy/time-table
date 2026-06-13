@@ -243,19 +243,11 @@ button{
 
 <script>
 
+const API_URL = https://script.google.com/macros/s/AKfycbzhsTnHRbUY2vP8OoDDSERi6z33DwZ9WQtvxX78JsrmzDFk7SuiDNwa2YTcV95i_T3o/exec
 
-
-google.script.run
-.withSuccessHandler(function(data){
-
-  console.log(data);
-
-  renderTable(data);
-
-})
-.getData();
-
-
+fetch(API_URL + "?action=getData")
+  .then(r => r.json())
+  .then(renderTable);
 
 function renderTable(data){
 
@@ -343,13 +335,13 @@ function renderTable(data){
 
 function save(row,col,value){
 
-
-
-  google.script.run
-
-  .updateCell(row,col,value);
-
-
+  fetch(
+    API_URL +
+    "?action=updateCell" +
+    "&row=" + row +
+    "&col=" + col +
+    "&value=" + encodeURIComponent(value)
+  );
 
 }
 
@@ -357,15 +349,8 @@ function save(row,col,value){
 
 function addRow(){
 
-  google.script.run
-    .withSuccessHandler(function(){
-
-      google.script.run
-        .withSuccessHandler(renderTable)
-        .getData();
-
-    })
-    .addRow();
+  fetch(API_URL + "?action=addRow")
+    .then(() => refreshTable());
 
 }
 
@@ -401,9 +386,9 @@ function updateChipColors(){
 
 function refreshTable(){
 
-  google.script.run
-    .withSuccessHandler(renderTable)
-    .getData();
+  fetch(API_URL + "?action=getData")
+    .then(r => r.json())
+    .then(renderTable);
 
 }
 
